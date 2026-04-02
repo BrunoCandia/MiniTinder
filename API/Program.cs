@@ -12,6 +12,16 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyHeader()
+            .AllowAnyMethod()
+            .WithOrigins("http://localhost:4200", "https://localhost:4200");
+    });
+});
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 //builder.Services.AddOpenApi();
 
@@ -22,6 +32,8 @@ if (app.Environment.IsDevelopment())
 {
     //app.MapOpenApi();
 }
+
+app.UseCors("CorsPolicy");
 
 //app.UseHttpsRedirection();
 
