@@ -1,13 +1,14 @@
 ﻿using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")] // https://localhost:5001/api/members
-    [ApiController]
-    public class MembersController : ControllerBase
+    //[Route("api/[controller]")] // https://localhost:5001/api/members
+    //[ApiController]
+    public class MembersController : BaseApiController
     {
         private readonly DataContext _dataContext;
 
@@ -23,6 +24,7 @@ namespace API.Controllers
             return Ok(users);
         }
 
+        [Authorize]
         [HttpGet("{id}")] // https://localhost:5001/api/members/A0E8162D-152A-F111-87A6-E8039A9A54C4
         public async Task<ActionResult<User>> GetMember(Guid id)
         {
