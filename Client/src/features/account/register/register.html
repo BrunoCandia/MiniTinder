@@ -1,0 +1,38 @@
+<div class="card bg-base-100 w-1/2 mx-auto flex flex-col p-6 rounded-lg shadow-lg">
+    <div class="card-title justify-center text-3xl text-primary">Sign up</div>
+    <div class="card-body w-full">
+        <form #registerForm ="ngForm" class="flex flex-col gap-4 w-full" (ngSubmit)="register()">
+            <input 
+                type="text" 
+                name="displayName" 
+                [(ngModel)]="crdentials.displayName" 
+                class="input input-bordered w-full" 
+                placeholder="Display Name">
+            <input 
+                type="text" 
+                name="email" 
+                [(ngModel)]="crdentials.email" 
+                class="input input-bordered w-full" 
+                placeholder="Email">
+            <input 
+                type="password" 
+                name="password" 
+                [(ngModel)]="crdentials.password" 
+                class="input input-bordered w-full" 
+                placeholder="Password">
+
+            // Example of using data from parent component (app) in a child component (register), can be removed
+            <select class="select w-full">
+                <option disabled selected>Choose a member</option>
+                @for (member of membersFromHome(); track member.id) {
+                    <option value="{{member.id}}">{{member.displayName}}</option>
+                }
+            </select>
+
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" (click)="cancel()" class="btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>            
+        </form>
+    </div>
+</div>

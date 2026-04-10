@@ -1,18 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
+import { Nav } from "../layout/nav/nav";
+import { AccountService } from '../core/services/account-service';
+import { Home } from "../features/home/home";
+import { User } from '../types/user';
 
 @Component({
   selector: 'app-root',
-  imports: [],
+  imports: [Nav, Home],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
   protected readonly title = signal('Mini Tinder');
-  protected members = signal<any>([]);
+  protected members = signal<User[]>([]);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private accountService: AccountService) {}
 
   //Using Subscriptions
   // ngOnInit(): void {
@@ -33,14 +37,23 @@ export class App implements OnInit {
   // Using Promises
   async ngOnInit(): Promise<void> {
     this.members.set(await this.getMembers());
+    this.setCurrentUser();
   }
   
   async getMembers() {
     try {
-      return lastValueFrom(this.http.get('https://localhost:5001/api/members'));
+      return lastValueFrom(this.http.get<User[]>('https://localhost:5001/api/members'));
     } catch (error) {
       console.error(error);
       throw error;
     }    
+  }
+
+  setCurrentUser() {
+    const userString = localStorage.getItem('user');
+    if (!userString) return;
+
+    const user = JSON.parse(userString);
+    this.accountService.currentUser.set(user);
   }
 }
