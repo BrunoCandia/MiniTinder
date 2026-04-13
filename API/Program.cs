@@ -29,6 +29,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -66,5 +67,20 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+
+try
+{
+    var context = services.GetRequiredService<DataContext>();
+    await context.Database.MigrateAsync();
+    await Seed.SeedDataAsync(context);
+}
+catch (Exception exception)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(exception, "An error occurred during migration or seeding");
+}
 
 app.Run();
