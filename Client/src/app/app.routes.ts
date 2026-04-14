@@ -8,11 +8,27 @@ import { authGuard } from '../core/guards/auth-guard';
 import { TestErrors } from '../features/test-errors/test-errors';
 import { NotFound } from '../shared/errors/not-found/not-found';
 import { ServerError } from '../shared/errors/server-error/server-error';
+import { MemberProfile } from '../features/members/member-profile/member-profile';
+import { MemberMessages } from '../features/members/member-messages/member-messages';
+import { MemberPhotos } from '../features/members/member-photos/member-photos';
+import { memberResolver } from '../features/members/member-resolver';
 
 export const routes: Routes = [
     {path: '', component: Home},
     {path: 'members', component: MemberList, canActivate: [authGuard]},
-    {path: 'members/:id', component: MemberDetailed, canActivate: [authGuard]},
+    {
+        path: 'members/:id',
+        resolve: {member: memberResolver},
+        runGuardsAndResolvers: 'always',
+        component: MemberDetailed,
+        children: [
+            {path: '', redirectTo: 'profile', pathMatch: 'full'},
+            {path: 'profile', component: MemberProfile, title: 'Profile'},
+            {path: 'photos', component: MemberPhotos, title: 'Photos'},
+            {path: 'messages', component: MemberMessages, title: 'Messages'}
+        ],
+        canActivate: [authGuard]
+    },
     {path: 'lists', component: Lists , canActivate: [authGuard]},
     {path: 'messages', component: Messages, canActivate: [authGuard]},
     {path: 'errors', component: TestErrors},
