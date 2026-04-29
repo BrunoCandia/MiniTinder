@@ -18,3 +18,10 @@ export type Photo = {
   memberId: string;
   isApproved: boolean;
 }
+
+export type EditableMember = {
+  displayName: string;
+  description?: string;
+  city: string;
+  country: string;
+}

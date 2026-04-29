@@ -5,6 +5,7 @@ namespace API.Interfaces
 {
     public interface IMemberRepository
     {
+        Task<Member?> GetMemberForUpdate(Guid id);
         void Update(Member member);
         Task<bool> SaveAllAsync();
         Task<IReadOnlyList<MemberDto>> GetMembersAsync();

@@ -1,2 +1,2 @@
-"email": "dave@test.com",
-"password": "password"
+"email": "lisa@test.com",
+"password": "Pa$$w0rd"

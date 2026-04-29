@@ -1,10 +1,13 @@
 ﻿using API.Data;
 using API.DTO;
 using API.Entities;
+using API.Extensions;
 using API.Interfaces;
+using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -52,6 +55,42 @@ namespace API.Controllers
             }
 
             return Ok(photos);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateMember(MemberUpdateDto memberUpdateDto)
+        {
+            var memberId = User.GetMemberId();
+
+            if (string.IsNullOrWhiteSpace(memberId))
+            {
+                return BadRequest("Invalid Member ID");
+            }
+
+            var member = await _memberRepository.GetMemberForUpdate(Guid.Parse(memberId));
+            //var memberDto = await _memberRepository.GetMemberByIdAsync(Guid.Parse(memberId));
+
+            if (member is null)
+            {
+                return BadRequest("Could not get member");
+            }
+
+            // Update member properties
+            member.DisplayName = memberUpdateDto.DisplayName ?? member.DisplayName;
+            member.Description = memberUpdateDto.Description ?? member.Description;
+            member.City = memberUpdateDto.City ?? member.City;
+            member.Country = memberUpdateDto.Country ?? member.Country;
+
+            member.User.DisplayName = memberUpdateDto.DisplayName ?? member.User.DisplayName;
+
+            _memberRepository.Update(member);
+
+            if (await _memberRepository.SaveAllAsync())
+            {
+                return NoContent();
+            }
+            
+            return BadRequest("Failed to update member");
         }
     }
 }

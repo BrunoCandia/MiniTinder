@@ -90,5 +90,14 @@ namespace API.Data
         {
             _context.Entry(member).State = EntityState.Modified;
         }
+
+        public async Task<Member?> GetMemberForUpdate(Guid id)
+        {
+            return await _context.Members
+                .Include(x => x.User)
+                .Include(x => x.Photos)
+                .IgnoreQueryFilters()
+                .SingleOrDefaultAsync(x => x.Id == id);
+        }
     }
 }
